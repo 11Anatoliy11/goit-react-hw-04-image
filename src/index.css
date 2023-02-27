@@ -1,5 +1,4 @@
-@import-normalize;
-/* bring in normalize.css styles */
+@import-normalize; /* bring in normalize.css styles */
 
 html {
   box-sizing: border-box;
@@ -29,6 +28,9 @@ img {
   height: auto;
 }
 
+/*
+ * Стили компонента App
+ */
 .App {
   display: grid;
   grid-template-columns: 1fr;

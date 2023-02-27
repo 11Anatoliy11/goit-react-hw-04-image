@@ -1,41 +1,44 @@
-import React, { Component } from 'react';
-import { createPortal } from "react-dom";
+import React, { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import s from './Modal.module.css';
 import PropTypes from 'prop-types';
 
-export default class Modal extends Component {
-    modalRoot = document.getElementById('modalRoot');
+const modalRoot = document.querySelector('#modalRoot');
 
-    componentDidMount() {
-        window.addEventListener('keydown', this.handleKeyDown);
-    }
-
-    componentWillUnmount() {
-        window.removeEventListener('keydown', this.handleKeyDown);
-    }
-
-    handleKeyDown = e => {
-        if (e.code === 'Escape') {
-            return this.props.onClose();
-        }
+export default function Modal({ onClose, pic }) {
+  useEffect(() => {
+    const handleKeyDown = e => {
+      if (e.code === 'Escape') {
+        return onClose();
+      }
     };
 
-    render() {
-        if (!this.props.show) {
-            return null;
-        }
-        return createPortal(
-            <div className={s.overlay}>
-                <div className={s.modal}>
-                    <img src={this.props.pic} alt="" />
-                </div>
-            </div>,
-            this.modalRoot
-        );
-    }
+    const handleClickAway = e => {
+      if (e.target.className.includes('Modal_overlay')) {
+        return onClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('click', handleClickAway);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('click', handleClickAway);
+    };
+  });
+
+  return createPortal(
+    <div className={s.overlay}>
+      <div className={s.modal}>
+        <img src={pic} alt="" />
+      </div>
+    </div>,
+    modalRoot
+  );
 }
 
 Modal.propTypes = {
-    onClose: PropTypes.func.isRequired,
-    show: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  pic: PropTypes.string.isRequired,
 };
